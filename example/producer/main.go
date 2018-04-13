@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gwaylib/testing/msq"
+	"github.com/gwaylib/beanmsq"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 	dealing := make(chan bool, 1)
 
 	// 生产者
-	p := msq.NewProducer(100, addr, tube)
+	p := beanmsq.NewProducer(100, addr, tube)
 	eventSize := 50000000
 	seed := time.Now().UnixNano()
 	buffer := make(chan int64, 1000)

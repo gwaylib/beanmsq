@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gwaylib/testing/msq"
+	"github.com/gwaylib/beanmsq"
 )
 
 func main() {
@@ -16,10 +16,10 @@ func main() {
 	dealing := make(chan bool, 1)
 
 	// 消费者
-	c := msq.NewConsumer(addr, tube)
+	c := beanmsq.NewConsumer(addr, tube)
 	result := sync.Map{}
 	_ = result
-	handle := func(ctx context.Context, job *msq.Job, tried int) bool {
+	handle := func(ctx context.Context, job *beanmsq.Job, tried int) bool {
 		// 检查并发消息的安全性, 若出现重复，说明读取是不安全的
 		// 注意，测试中发现并发读取时存在重复接收到数据的问题
 		oldID, ok := result.LoadOrStore(string(job.Body), job.ID)
@@ -35,7 +35,7 @@ func main() {
 	time.Sleep(1e9)
 
 	//	// 生产者
-	//	p := msq.NewProducer(100, addr, tube)
+	//	p := beanmsq.NewProducer(100, addr, tube)
 	//	eventSize := 50000000
 	//	seed := time.Now().UnixNano()
 	//	buffer := make(chan int64, 1000)

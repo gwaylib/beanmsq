@@ -15,7 +15,7 @@
 // // 在适当的地方关闭连接
 // // c.Close() // Stop func to stop working
 //
-package msq
+package beanmsq
 
 import (
 	"context"
