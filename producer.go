@@ -20,7 +20,7 @@ type producer struct {
 	addr        string
 	tube        string
 	borrowEvent chan bool
-	poolSync    sync.Mutex
+	poolSync    sync.RWMutex
 	curPoolSize int
 	maxPoolSize int
 	isClosed    bool
@@ -29,11 +29,11 @@ type producer struct {
 
 // 通过一个连接池发送数据给beanstalkd，若需要顺序发送，请将池设定为1
 func (p *producer) Put(data []byte) error {
-	p.poolSync.Lock()
+	p.poolSync.RLock()
 	if p.isClosed {
 		return errors.New("producer has closed")
 	}
-	p.poolSync.Unlock()
+	p.poolSync.RUnlock()
 
 	// 借调事件, 若超过池的大小，需要等待池的归还后才能继续
 	p.borrowEvent <- true
@@ -102,7 +102,6 @@ func isBrokenPipeErr(err error) bool {
 // conn implements Producer and Workder and io.Closer
 type conn struct {
 	addr, tube string
-	mu         sync.Mutex
 	conn       *beans.Conn
 	closed     bool
 }

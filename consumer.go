@@ -65,7 +65,7 @@ type Consumer interface {
 type consumer struct {
 	addr     string
 	tube     string
-	workerMu sync.Mutex
+	workerMu sync.RWMutex
 	isClosed bool
 	workers  []io.Closer
 }
@@ -242,7 +242,7 @@ func (c *worker) Close() error {
 
 	c.mutex.Lock()
 	c.disconn("normal shutdown")
-	defer c.mutex.Unlock()
+	c.mutex.Unlock()
 
 	<-c.sig_end
 	return nil
