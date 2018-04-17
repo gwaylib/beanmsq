@@ -103,7 +103,6 @@ func isBrokenPipeErr(err error) bool {
 type conn struct {
 	addr, tube string
 	conn       *beans.Conn
-	closed     bool
 }
 
 func newConn(addr, tube string) *conn {
@@ -137,19 +136,10 @@ func (p *conn) disconn() error {
 		p.conn.Quit()
 		p.conn = nil
 	}
-	p.closed = true
 	return nil
 }
 
-func (p *conn) isClosed() bool {
-	return p.closed
-}
-
 func (p *conn) put(data []byte) error {
-	if p.isClosed() {
-		return ErrClosed
-	}
-
 	if err := p.connect(); err != nil {
 		p.disconn()
 		return err
