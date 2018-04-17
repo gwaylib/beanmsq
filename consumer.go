@@ -180,7 +180,6 @@ func (c *worker) aliveCheck() {
 		case <-c.sig_alive:
 			continue
 		case <-t.C:
-			panic("alive check")
 			c.timeout("alive check")
 			continue
 		}
