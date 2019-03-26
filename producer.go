@@ -120,13 +120,13 @@ func (p *conn) connect() error {
 	// conn
 	kon, err := net.DialTimeout("tcp", p.addr, 20*1e9)
 	if err != nil {
-		return err
+		return errors.As(err, p.addr)
 	}
 	p.conn, _ = beans.NewConn(kon, p.addr)
 	// tube
 	if err := p.conn.Use(p.tube); err != nil {
 		p.disconn()
-		return err
+		return errors.As(err, p.tube)
 	}
 	return nil
 }
@@ -142,12 +142,12 @@ func (p *conn) disconn() error {
 func (p *conn) put(data []byte) error {
 	if err := p.connect(); err != nil {
 		p.disconn()
-		return err
+		return errors.As(err)
 	}
 
 	if _, err := p.conn.Put(data, 0, 0, 30); err != nil {
 		p.disconn()
-		return err
+		return errors.As(err, string(data))
 	}
 	return nil
 }
