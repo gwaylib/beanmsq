@@ -142,7 +142,7 @@ type worker struct {
 
 func newConsumer(addr, tube string, handle HandleContext, reserveOut time.Duration) *worker {
 	return &worker{
-		log:              logger.New(&logger.DefaultContext, tube, 0, stdio.New(os.Stderr)),
+		log:              logger.New(&logger.DefaultContext, tube, 0, stdio.New(os.Stdout, os.Stderr)),
 		mutex:            sync.Mutex{},
 		addr:             addr,
 		tubename:         tube,
