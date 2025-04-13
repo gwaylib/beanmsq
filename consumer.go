@@ -1,12 +1,11 @@
-//
 // 例子
 //
 // c := NewConsumer("localhost:11130", "test")
 //
-// handle := func(ctx context.Context, job *beans.Job, tried int) bool{
-//		// 处理结束后返回true删除数据
-//		return true
-// }
+//	handle := func(ctx context.Context, job *beans.Job, tried int) bool{
+//			// 处理结束后返回true删除数据
+//			return true
+//	}
 //
 // 开启两个队列去并发读取
 // go c.Reserve(20*time.Minute, handle)
@@ -14,7 +13,6 @@
 //
 // // 在适当的地方关闭连接
 // // c.Close() // Stop func to stop working
-//
 package beanmsq
 
 import (
@@ -47,7 +45,6 @@ type Job struct {
 	Body []byte
 }
 
-//
 // 若发送不成功
 // 返回true删除beanstalkd队件数据，否则不删除在一定时间后放回到就绪队中再次读取以便达到重试的效果。
 // 重试机制分别间隔以1次3秒钟、30次每分钟、48次每小时再次尝试发送, 若48小时后未能发送成功，数据将被强制删除。
@@ -142,7 +139,7 @@ type worker struct {
 
 func newConsumer(addr, tube string, handle HandleContext, reserveOut time.Duration) *worker {
 	return &worker{
-		log:              logger.New(&logger.DefaultContext, tube, 0, stdio.New(os.Stdout, os.Stderr)),
+		log:              logger.NewDefaultLogger(tube, stdio.New(os.Stdout, os.Stderr)),
 		mutex:            sync.Mutex{},
 		addr:             addr,
 		tubename:         tube,

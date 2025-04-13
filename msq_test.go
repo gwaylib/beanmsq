@@ -24,19 +24,19 @@ func TestMsq(t *testing.T) {
 		if ok {
 			t.Fatal(fmt.Sprintf("repeated:%d,%d,%s", oldID, job.ID, string(job.Body)))
 		}
-		fmt.Printf("receive job, tried:%d, job:%+v\n", tried, string(job.Body))
+		//fmt.Printf("receive job, tried:%d, job:%+v\n", tried, string(job.Body))
 		dealing <- true
 		return true
 	}
 	for i := 100; i > 0; i-- {
-		go c.Reserve(20*time.Minute, handle)
+		go c.Reserve(1*time.Minute, handle)
 	}
 	// 等待消费者就绪
 	time.Sleep(1e9)
 
 	// 生产者
 	p := NewProducer(100, addr, tube)
-	eventSize := 500000
+	eventSize := 1000
 	seed := time.Now().UnixNano()
 	buffer := make(chan int64, 1000)
 	for i := 1; i > 0; i-- {
